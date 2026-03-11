@@ -43,6 +43,12 @@ export function Navbar() {
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <Link
+            href="/profile/style"
+            className="text-sm text-accent-dim hover:text-accent-muted transition-colors"
+          >
+            Style
+          </Link>
           <span className="text-sm text-accent-dim">{user.name}</span>
           <button
             onClick={() => {

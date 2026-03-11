@@ -3,6 +3,8 @@ import cors from 'cors';
 import authRoutes from './routes/auth';
 import wardrobeRoutes from './routes/wardrobe';
 import tripRoutes from './routes/trips';
+import profileRoutes from './routes/profile';
+import outfitRoutes from './routes/outfits';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -21,6 +23,8 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/wardrobe', wardrobeRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/outfits', outfitRoutes);
 
 // ── Global error handler ─────────────────────────────
 app.use(

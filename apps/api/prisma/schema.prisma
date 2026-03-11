@@ -16,8 +16,27 @@ model User {
   updatedAt    DateTime       @updatedAt @map("updated_at")
   wardrobe     WardrobeItem[]
   trips        Trip[]
+  styleProfile StyleProfile?
 
   @@map("users")
+}
+
+model StyleProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique @map("user_id")
+  bodyType       String   @map("body_type")
+  heightRange    String   @map("height_range")
+  skinUndertone  String   @map("skin_undertone")
+  styleVibe      String   @map("style_vibe")
+  fitPreference  String   @map("fit_preference")
+  favoriteColors String[] @map("favorite_colors")
+  avoidColors    String[] @map("avoid_colors")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("style_profiles")
 }
 
 model WardrobeItem {

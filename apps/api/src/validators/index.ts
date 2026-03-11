@@ -46,3 +46,26 @@ export const createTripSchema = z
     message: 'End date must be after start date',
     path: ['endDate'],
   });
+
+// ── Style Profile ────────────────────────────────────
+const bodyTypes = ['lean', 'athletic', 'broad', 'curvy', 'average'] as const;
+const heightRanges = ['petite', 'short', 'average', 'tall', 'very_tall'] as const;
+const skinUndertones = ['warm', 'cool', 'neutral'] as const;
+const styleVibes = ['minimalist', 'classic', 'streetwear', 'bohemian', 'preppy', 'edgy', 'romantic', 'sporty'] as const;
+const fitPreferences = ['slim', 'regular', 'relaxed', 'oversized'] as const;
+
+export const styleProfileSchema = z.object({
+  bodyType: z.enum(bodyTypes),
+  heightRange: z.enum(heightRanges),
+  skinUndertone: z.enum(skinUndertones),
+  styleVibe: z.enum(styleVibes),
+  fitPreference: z.enum(fitPreferences),
+  favoriteColors: z.array(z.string().min(1).max(30)).max(10).default([]),
+  avoidColors: z.array(z.string().min(1).max(30)).max(10).default([]),
+});
+
+// ── Outfit Swap ──────────────────────────────────────
+export const swapItemSchema = z.object({
+  outfitItemId: z.string().min(1),
+  newWardrobeItemId: z.string().min(1),
+});

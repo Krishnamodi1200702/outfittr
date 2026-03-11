@@ -152,6 +152,20 @@ Base URL: `http://localhost:4000/api`
 | GET    | `/trips/:id`                  | Yes  | Get trip detail with weather + days  |
 | DELETE | `/trips/:id`                  | Yes  | Delete trip                          |
 | POST   | `/trips/:id/refresh-weather`  | Yes  | Re-fetch weather for all trip days   |
+| POST   | `/trips/:id/generate-outfits` | Yes  | Generate day + night outfits         |
+
+### Style Profile
+
+| Method | Endpoint         | Auth | Description                     |
+| ------ | ---------------- | ---- | ------------------------------- |
+| GET    | `/profile/style` | Yes  | Get current user's style profile |
+| PUT    | `/profile/style` | Yes  | Create or update style profile   |
+
+### Outfits
+
+| Method | Endpoint                        | Auth | Description                      |
+| ------ | ------------------------------- | ---- | -------------------------------- |
+| POST   | `/outfits/:id/swap-item`        | Yes  | Swap one item in an outfit       |
 
 ### Weather Integration
 
@@ -168,6 +182,17 @@ How it works:
 Both geocode and forecast responses are cached in-memory (geocode: 1 hour TTL, forecast: 15 min TTL) to avoid redundant API hits.
 
 > **Note**: Open-Meteo forecasts are available for ~16 days into the future. Trips further out will have weather populated once they enter the forecast window.
+
+### Style Profile & Outfit Generation
+
+Outfit generation is **fully deterministic and rules-based** — no paid AI keys needed. The engine in `src/lib/outfitEngine.ts` works as follows:
+
+1. User completes a Style Profile wizard (body type, height, skin undertone, vibe, fit preference, color likes/dislikes).
+2. When "Generate Outfits" is clicked on a trip, the engine loads the user's wardrobe, trip days with weather, and style profile.
+3. For each day it generates a **day outfit** and optionally a **night outfit** (if activities include nightlife, dinner, bar, etc.).
+4. Items are scored using weighted rules: formality match to activity, weather suitability, color harmony with skin undertone, body type fit rules, favorite/avoid color boosts/penalties, and recency penalty for variety.
+5. Each outfit gets a confidence score (0–100) and personalized "why this works" notes.
+6. Users can swap individual items in any outfit via the swap modal (filtered by matching category).
 
 ## Deployment
 

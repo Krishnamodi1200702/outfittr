@@ -8,6 +8,10 @@ import type {
   UpdateWardrobeItemRequest,
   Trip,
   CreateTripRequest,
+  StyleProfile,
+  UpsertStyleProfileRequest,
+  SwapItemRequest,
+  OutfitItem,
   ApiError,
 } from '@outfittr/shared';
 
@@ -136,6 +140,30 @@ class ApiClient {
 
   async refreshTripWeather(id: string): Promise<Trip> {
     return this.request<Trip>(`/trips/${id}/refresh-weather`, { method: 'POST' });
+  }
+
+  async generateOutfits(tripId: string): Promise<Trip> {
+    return this.request<Trip>(`/trips/${tripId}/generate-outfits`, { method: 'POST' });
+  }
+
+  // ── Style Profile ────────────────────────────────
+  async getStyleProfile(): Promise<StyleProfile | null> {
+    return this.request<StyleProfile | null>('/profile/style');
+  }
+
+  async upsertStyleProfile(body: UpsertStyleProfileRequest): Promise<StyleProfile> {
+    return this.request<StyleProfile>('/profile/style', {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+  }
+
+  // ── Outfits ──────────────────────────────────────
+  async swapOutfitItem(outfitId: string, body: SwapItemRequest): Promise<OutfitItem> {
+    return this.request<OutfitItem>(`/outfits/${outfitId}/swap-item`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
   }
 }
 

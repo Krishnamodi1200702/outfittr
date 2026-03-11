@@ -5,20 +5,22 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
-import type { WardrobeItem, Trip } from '@outfittr/shared';
+import type { WardrobeItem, Trip, StyleProfile } from '@outfittr/shared';
 import { formatDateRange, daysBetween, CATEGORY_LABELS } from '@/lib/utils';
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [wardrobe, setWardrobe] = useState<WardrobeItem[]>([]);
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [profile, setProfile] = useState<StyleProfile | null | undefined>(undefined);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([api.listWardrobe(), api.listTrips()])
-      .then(([w, t]) => {
+    Promise.all([api.listWardrobe(), api.listTrips(), api.getStyleProfile()])
+      .then(([w, t, p]) => {
         setWardrobe(w);
         setTrips(t);
+        setProfile(p);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -126,6 +128,23 @@ export default function DashboardPage() {
               )}
             </div>
 
+            {/* Style Profile CTA */}
+            {profile === null && (
+              <div className="card lg:col-span-2 border-dashed">
+                <div className="flex flex-col items-center py-4 text-center sm:flex-row sm:text-left sm:justify-between">
+                  <div className="mb-4 sm:mb-0">
+                    <h2 className="font-semibold">Personalize your style</h2>
+                    <p className="mt-1 text-sm text-accent-dim">
+                      Complete your style profile so we can tailor outfit picks to your body, taste, and colors.
+                    </p>
+                  </div>
+                  <Link href="/profile/style" className="btn-primary text-sm shrink-0">
+                    Set up style profile
+                  </Link>
+                </div>
+              </div>
+            )}
+
             {/* Quick actions */}
             <div className="card lg:col-span-2">
               <h2 className="mb-4 font-semibold">Quick actions</h2>
@@ -135,6 +154,9 @@ export default function DashboardPage() {
                 </Link>
                 <Link href="/trips" className="btn-secondary text-sm">
                   + Plan a trip
+                </Link>
+                <Link href="/profile/style" className="btn-secondary text-sm">
+                  {profile ? '✎ Edit style profile' : '✦ Personalize my style'}
                 </Link>
               </div>
             </div>

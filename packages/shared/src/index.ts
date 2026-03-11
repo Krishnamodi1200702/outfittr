@@ -119,3 +119,40 @@ export interface ApiError {
   message: string;
   errors?: Record<string, string[]>;
 }
+
+// ── Style Profile ────────────────────────────────────
+export type BodyType = 'lean' | 'athletic' | 'broad' | 'curvy' | 'average';
+export type HeightRange = 'petite' | 'short' | 'average' | 'tall' | 'very_tall';
+export type SkinUndertone = 'warm' | 'cool' | 'neutral';
+export type StyleVibe = 'minimalist' | 'classic' | 'streetwear' | 'bohemian' | 'preppy' | 'edgy' | 'romantic' | 'sporty';
+export type FitPreference = 'slim' | 'regular' | 'relaxed' | 'oversized';
+
+export interface StyleProfile {
+  id: string;
+  userId: string;
+  bodyType: BodyType;
+  heightRange: HeightRange;
+  skinUndertone: SkinUndertone;
+  styleVibe: StyleVibe;
+  fitPreference: FitPreference;
+  favoriteColors: string[];
+  avoidColors: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpsertStyleProfileRequest {
+  bodyType: BodyType;
+  heightRange: HeightRange;
+  skinUndertone: SkinUndertone;
+  styleVibe: StyleVibe;
+  fitPreference: FitPreference;
+  favoriteColors: string[];
+  avoidColors: string[];
+}
+
+// ── Outfit Swap ──────────────────────────────────────
+export interface SwapItemRequest {
+  outfitItemId: string;
+  newWardrobeItemId: string;
+}
