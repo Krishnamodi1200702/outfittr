@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { AppShell } from '@/components/layout/app-shell';
 import { Modal, Badge, EmptyState } from '@/components/ui';
+import { ItemThumbnail } from '@/components/ui/item-thumbnail';
 import { WardrobeItemForm } from '@/components/wardrobe/item-form';
 import { api } from '@/lib/api';
 import type { WardrobeItem, CreateWardrobeItemRequest } from '@outfittr/shared';
@@ -97,14 +98,19 @@ export default function WardrobePage() {
                 key={item.id}
                 className="card group relative transition-colors hover:border-border-hover"
               >
-                <div className="mb-3 flex items-start justify-between">
-                  <div>
+                <div className="mb-3 flex items-start gap-3">
+                  <ItemThumbnail
+                    src={item.imageUrl}
+                    alt={item.name}
+                    fallback={CATEGORY_LABELS[item.category]?.charAt(0)}
+                  />
+                  <div className="min-w-0 flex-1">
                     <p className="font-medium text-sm">{item.name}</p>
                     <p className="text-xs text-accent-dim">
                       {CATEGORY_LABELS[item.category]} · {FORMALITY_LABELS[item.formality]}
                     </p>
                   </div>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                     <button
                       onClick={() => setEditing(item)}
                       className="rounded p-1 text-xs text-accent-dim hover:text-accent hover:bg-surface-subtle transition-colors"

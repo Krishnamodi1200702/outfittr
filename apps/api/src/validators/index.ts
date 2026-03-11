@@ -28,7 +28,7 @@ export const createWardrobeItemSchema = z.object({
   seasonTags: z.array(z.enum(seasons)).min(1, 'At least one season required'),
   formality: z.enum(formalities),
   notes: z.string().max(1000).optional(),
-  imageUrl: z.string().url().optional(),
+  imageUrl: z.string().url().nullish().or(z.literal('')).transform((v) => v || null),
 });
 
 export const updateWardrobeItemSchema = createWardrobeItemSchema.partial();

@@ -194,6 +194,28 @@ Outfit generation is **fully deterministic and rules-based** — no paid AI keys
 5. Each outfit gets a confidence score (0–100) and personalized "why this works" notes.
 6. Users can swap individual items in any outfit via the swap modal (filtered by matching category).
 
+### Image Uploads (Cloudinary)
+
+Wardrobe items support image uploads via [Cloudinary](https://cloudinary.com) — **free tier** (25 credits/month, plenty for personal use). Uploads are **unsigned** (no secret keys in the browser).
+
+Setup:
+
+1. Create a free Cloudinary account at [cloudinary.com](https://cloudinary.com).
+2. In Settings → Upload → Upload Presets, create an **unsigned** preset:
+   - Folder: `outfittr`
+   - Allowed formats: `jpg, png, webp`
+   - Max file size: 5 MB (set under "Upload control")
+3. Copy your **Cloud name** (from Dashboard) and **Preset name** into `apps/web/.env`:
+
+```env
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your-cloud-name"
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET="your-preset-name"
+```
+
+> **Security note**: Unsigned presets allow anyone with the preset name to upload. Lock it down by restricting folder, allowed formats, max file size, and optionally enabling moderation in the Cloudinary console. Never use a signed upload preset in client-side code.
+
+If the Cloudinary env vars are not set, the upload component gracefully shows an error — the app still works, images are just optional.
+
 ## Deployment
 
 ### Web → Vercel
@@ -202,7 +224,10 @@ Outfit generation is **fully deterministic and rules-based** — no paid AI keys
 # In Vercel, set:
 # - Root Directory: apps/web
 # - Framework: Next.js
-# - Environment Variables: NEXT_PUBLIC_API_URL
+# - Environment Variables:
+#     NEXT_PUBLIC_API_URL
+#     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+#     NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
 ```
 
 ### API → Railway / Render / Fly.io

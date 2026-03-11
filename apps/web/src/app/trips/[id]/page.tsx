@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Badge, Modal } from '@/components/ui';
+import { ItemThumbnail } from '@/components/ui/item-thumbnail';
 import { api, ApiRequestError } from '@/lib/api';
 import type { Trip, Outfit, OutfitItem, WardrobeItem } from '@outfittr/shared';
 import { formatDate, formatDateRange, daysBetween, weatherCodeToIcon, weatherCodeToLabel, CATEGORY_LABELS } from '@/lib/utils';
@@ -273,9 +274,12 @@ export default function TripDetailPage() {
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {packingList.map((item) => (
                   <div key={item.id} className="flex items-center gap-3 rounded-lg border border-border p-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-surface-subtle text-xs text-accent-dim">
-                      {CATEGORY_LABELS[item.category]?.charAt(0) ?? '?'}
-                    </div>
+                    <ItemThumbnail
+                      src={item.imageUrl}
+                      alt={item.name}
+                      size="sm"
+                      fallback={CATEGORY_LABELS[item.category]?.charAt(0)}
+                    />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{item.name}</p>
                       <p className="text-xs text-accent-dim">{CATEGORY_LABELS[item.category]} · {item.colors.slice(0, 2).join(', ')}</p>
@@ -307,6 +311,7 @@ export default function TripDetailPage() {
                         disabled={swapping}
                         className="flex w-full items-center gap-3 rounded-lg border border-border p-3 text-left hover:border-border-hover transition-colors disabled:opacity-50"
                       >
+                        <ItemThumbnail src={w.imageUrl} alt={w.name} size="sm" fallback={CATEGORY_LABELS[w.category]?.charAt(0)} />
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium">{w.name}</p>
                           <p className="text-xs text-accent-dim">{w.colors.slice(0, 3).join(', ')} · {w.formality}</p>
@@ -358,8 +363,14 @@ function OutfitCard({ outfit, onSwap }: { outfit: Outfit; onSwap: (item: OutfitI
 
       <div className="mb-3 space-y-1.5">
         {(outfit.items ?? []).map((oi) => (
-          <div key={oi.id} className="group flex items-center justify-between rounded-md bg-surface-raised/50 px-3 py-2">
-            <div className="min-w-0">
+          <div key={oi.id} className="group flex items-center gap-2.5 rounded-md bg-surface-raised/50 px-3 py-2">
+            <ItemThumbnail
+              src={oi.wardrobeItem?.imageUrl}
+              alt={oi.wardrobeItem?.name ?? ''}
+              size="sm"
+              fallback={CATEGORY_LABELS[oi.wardrobeItem?.category ?? '']?.charAt(0)}
+            />
+            <div className="min-w-0 flex-1">
               <p className="text-xs font-medium">{oi.wardrobeItem?.name ?? 'Unknown'}</p>
               <p className="text-[10px] text-accent-dim">
                 {CATEGORY_LABELS[oi.wardrobeItem?.category ?? ''] ?? ''} · {oi.wardrobeItem?.colors.slice(0, 2).join(', ')}

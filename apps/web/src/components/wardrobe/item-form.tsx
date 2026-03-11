@@ -3,6 +3,7 @@
 import { useState, FormEvent } from 'react';
 import type { WardrobeItem, CreateWardrobeItemRequest, ClothingCategory, Formality, Season } from '@outfittr/shared';
 import { Input, Select, Badge } from '@/components/ui';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { CATEGORY_LABELS, FORMALITY_LABELS } from '@/lib/utils';
 
 const SEASON_OPTIONS: Season[] = ['spring', 'summer', 'fall', 'winter'];
@@ -21,7 +22,8 @@ export function WardrobeItemForm({ initial, onSubmit, onCancel }: Props) {
   const [seasonTags, setSeasonTags] = useState<string[]>(initial?.seasonTags || []);
   const [formality, setFormality] = useState<string>(initial?.formality || '');
   const [notes, setNotes] = useState(initial?.notes || '');
-  const [imageUrl, setImageUrl] = useState(initial?.imageUrl || '');
+  const [imageUrl, setImageUrl] = useState<string | null>(initial?.imageUrl || null);
+  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -50,7 +52,7 @@ export function WardrobeItemForm({ initial, onSubmit, onCancel }: Props) {
         seasonTags: seasonTags as Season[],
         formality: formality as Formality,
         ...(notes && { notes }),
-        ...(imageUrl && { imageUrl }),
+        imageUrl: imageUrl || undefined,
       };
       await onSubmit(data);
     } catch (err) {
@@ -145,12 +147,13 @@ export function WardrobeItemForm({ initial, onSubmit, onCancel }: Props) {
         </div>
       </div>
 
-      <Input
-        label="Image URL (optional)"
+      <ImageUpload
         value={imageUrl}
-        onChange={(e) => setImageUrl(e.target.value)}
-        placeholder="https://..."
-        type="url"
+        onChange={(url) => {
+          setImageUrl(url);
+          setUploading(false);
+        }}
+        disabled={loading}
       />
 
       <div className="space-y-1.5">
@@ -168,8 +171,8 @@ export function WardrobeItemForm({ initial, onSubmit, onCancel }: Props) {
         <button type="button" onClick={onCancel} className="btn-ghost text-sm">
           Cancel
         </button>
-        <button type="submit" disabled={loading} className="btn-primary text-sm">
-          {loading ? 'Saving…' : initial ? 'Update' : 'Add item'}
+        <button type="submit" disabled={loading || uploading} className="btn-primary text-sm">
+          {uploading ? 'Uploading image…' : loading ? 'Saving…' : initial ? 'Update' : 'Add item'}
         </button>
       </div>
     </form>
