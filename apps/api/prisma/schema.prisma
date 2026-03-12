@@ -98,8 +98,9 @@ model Outfit {
   occasion  String
   notes     String?
 
-  tripDay TripDay      @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
-  items   OutfitItem[]
+  tripDay  TripDay          @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
+  items    OutfitItem[]
+  feedback OutfitFeedback[]
 
   @@map("outfits")
 }
@@ -114,4 +115,40 @@ model OutfitItem {
 
   @@unique([outfitId, wardrobeItemId])
   @@map("outfit_items")
+}
+
+model OutfitFeedback {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  outfitId  String   @map("outfit_id")
+  rating    Int      // 1 = like, -1 = dislike
+  reasons   String[]
+  createdAt DateTime @default(now()) @map("created_at")
+
+  outfit Outfit @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, outfitId])
+  @@map("outfit_feedback")
+}
+
+model SwapEvent {
+  id                 String   @id @default(cuid())
+  userId             String   @map("user_id")
+  outfitId           String   @map("outfit_id")
+  outfitItemId       String   @map("outfit_item_id")
+  fromWardrobeItemId String   @map("from_wardrobe_item_id")
+  toWardrobeItemId   String   @map("to_wardrobe_item_id")
+  category           String
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  @@map("swap_events")
+}
+
+model UserPreferenceWeights {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  weights   Json     @default("{}")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preference_weights")
 }

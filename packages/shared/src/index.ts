@@ -156,3 +156,28 @@ export interface SwapItemRequest {
   outfitItemId: string;
   newWardrobeItemId: string;
 }
+
+// ── Outfit Feedback ──────────────────────────────────
+export interface OutfitFeedback {
+  id: string;
+  userId: string;
+  outfitId: string;
+  rating: 1 | -1;
+  reasons: string[];
+  createdAt: string;
+}
+
+export interface SubmitFeedbackRequest {
+  rating: 1 | -1;
+  reasons: string[];
+}
+
+// ── Personalization Summary ──────────────────────────
+export interface PersonalizationSummary {
+  likes: number;
+  dislikes: number;
+  swaps: number;
+  totalSignals: number;
+  preferences: string[];
+  weights: Record<string, number>;
+}

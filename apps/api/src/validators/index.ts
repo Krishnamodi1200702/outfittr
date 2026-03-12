@@ -69,3 +69,9 @@ export const swapItemSchema = z.object({
   outfitItemId: z.string().min(1),
   newWardrobeItemId: z.string().min(1),
 });
+
+// ── Outfit Feedback ──────────────────────────────────
+export const outfitFeedbackSchema = z.object({
+  rating: z.union([z.literal(1), z.literal(-1)]),
+  reasons: z.array(z.string().min(1).max(100)).max(6).default([]),
+});

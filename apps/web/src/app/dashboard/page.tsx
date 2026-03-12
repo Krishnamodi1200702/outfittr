@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
-import type { WardrobeItem, Trip, StyleProfile } from '@outfittr/shared';
+import type { WardrobeItem, Trip, StyleProfile, PersonalizationSummary } from '@outfittr/shared';
 import { formatDateRange, daysBetween, CATEGORY_LABELS } from '@/lib/utils';
 
 export default function DashboardPage() {
@@ -13,14 +13,21 @@ export default function DashboardPage() {
   const [wardrobe, setWardrobe] = useState<WardrobeItem[]>([]);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [profile, setProfile] = useState<StyleProfile | null | undefined>(undefined);
+  const [personalization, setPersonalization] = useState<PersonalizationSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([api.listWardrobe(), api.listTrips(), api.getStyleProfile()])
-      .then(([w, t, p]) => {
+    Promise.all([
+      api.listWardrobe(),
+      api.listTrips(),
+      api.getStyleProfile(),
+      api.getPersonalizationSummary().catch(() => null),
+    ])
+      .then(([w, t, p, ps]) => {
         setWardrobe(w);
         setTrips(t);
         setProfile(p);
+        setPersonalization(ps);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -127,6 +134,35 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
+
+            {/* Personalization Status */}
+            {personalization && personalization.totalSignals > 0 && (
+              <div className="card lg:col-span-2">
+                <div className="flex items-start justify-between mb-3">
+                  <h2 className="font-semibold">Personalization</h2>
+                  <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-medium text-emerald-400">
+                    Active
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-4 mb-3 text-xs text-accent-muted">
+                  <span>👍 {personalization.likes} likes</span>
+                  <span>👎 {personalization.dislikes} dislikes</span>
+                  <span>🔄 {personalization.swaps} swaps</span>
+                </div>
+                {personalization.preferences.length > 0 && (
+                  <div>
+                    <p className="text-[10px] text-accent-dim mb-1.5">Current preferences:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {personalization.preferences.map((p) => (
+                        <span key={p} className="rounded-md bg-surface-subtle px-2.5 py-1 text-xs text-accent-muted">
+                          {p}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Style Profile CTA */}
             {profile === null && (

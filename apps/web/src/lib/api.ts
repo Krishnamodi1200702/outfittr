@@ -12,6 +12,9 @@ import type {
   UpsertStyleProfileRequest,
   SwapItemRequest,
   OutfitItem,
+  OutfitFeedback,
+  SubmitFeedbackRequest,
+  PersonalizationSummary,
   ApiError,
 } from '@outfittr/shared';
 
@@ -164,6 +167,21 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(body),
     });
+  }
+
+  async submitFeedback(outfitId: string, body: SubmitFeedbackRequest): Promise<OutfitFeedback> {
+    return this.request<OutfitFeedback>(`/outfits/${outfitId}/feedback`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+
+  async getFeedback(outfitId: string): Promise<OutfitFeedback | null> {
+    return this.request<OutfitFeedback | null>(`/outfits/${outfitId}/feedback`);
+  }
+
+  async getPersonalizationSummary(): Promise<PersonalizationSummary> {
+    return this.request<PersonalizationSummary>('/outfits/personalization/summary');
   }
 }
 

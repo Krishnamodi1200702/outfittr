@@ -163,9 +163,12 @@ Base URL: `http://localhost:4000/api`
 
 ### Outfits
 
-| Method | Endpoint                        | Auth | Description                      |
-| ------ | ------------------------------- | ---- | -------------------------------- |
-| POST   | `/outfits/:id/swap-item`        | Yes  | Swap one item in an outfit       |
+| Method | Endpoint                         | Auth | Description                      |
+| ------ | -------------------------------- | ---- | -------------------------------- |
+| POST   | `/outfits/:id/swap-item`         | Yes  | Swap one item in an outfit       |
+| POST   | `/outfits/:id/feedback`          | Yes  | Like/dislike with reason chips   |
+| GET    | `/outfits/:id/feedback`          | Yes  | Get existing feedback            |
+| GET    | `/outfits/personalization/summary` | Yes | Learning stats + active weights |
 
 ### Weather Integration
 
@@ -193,6 +196,25 @@ Outfit generation is **fully deterministic and rules-based** — no paid AI keys
 4. Items are scored using weighted rules: formality match to activity, weather suitability, color harmony with skin undertone, body type fit rules, favorite/avoid color boosts/penalties, and recency penalty for variety.
 5. Each outfit gets a confidence score (0–100) and personalized "why this works" notes.
 6. Users can swap individual items in any outfit via the swap modal (filtered by matching category).
+
+### Personalization Learning Loop
+
+Outfittr learns from your behavior over time — **no paid AI, fully deterministic and explainable**.
+
+How the learning loop works:
+
+1. **Feedback signals**: After outfits are generated, users can 👍 like or 👎 dislike each outfit. Reason chips (e.g., "Too bright", "Good fit", "Not my vibe") provide structured signal.
+2. **Swap signals**: Every time an item is swapped (e.g., replacing loafers with sneakers), the swap is recorded with category and formality context.
+3. **Weight computation**: The learning engine (`src/lib/learningEngine.ts`) processes the last 50 feedback events and 30 swap events to update 10 preference weights (clamped to [-1, 1]):
+   - `preferNeutralColors` / `preferBrightAccents` / `avoidBrightColors`
+   - `preferCasualShoes` (sneakers vs dress shoes)
+   - `preferSmartCasualNight` (dress up vs keep casual at night)
+   - `preferRelaxedFit` / `avoidTightTops`
+   - `preferOuterwearLayers` / `preferAccessories`
+   - `preferDressesOverSeparates`
+4. **Stability**: Weights decay 5% per update to prevent runaway drift. All signals are additive and bounded.
+5. **Engine integration**: The outfit engine reads learned weights and applies them as score modifiers during item scoring. Outfit notes include a "🧠 Personalized" line when active.
+6. **Dashboard widget**: Shows total likes, dislikes, swaps, and top 3 active preferences in plain language.
 
 ### Image Uploads (Cloudinary)
 
