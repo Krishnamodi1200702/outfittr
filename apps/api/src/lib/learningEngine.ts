@@ -180,8 +180,8 @@ export async function updateUserWeightsFromSignals(userId: string): Promise<Pref
   // 4. Persist
   await prisma.userPreferenceWeights.upsert({
     where: { userId },
-    update: { weights: weights as Record<string, number> },
-    create: { userId, weights: weights as Record<string, number> },
+    update: { weights: weights as unknown as Record<string, number> },
+    create: { userId, weights: weights as unknown as Record<string, number> },
   });
 
   return weights;
