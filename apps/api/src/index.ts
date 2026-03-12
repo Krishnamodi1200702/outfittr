@@ -7,7 +7,7 @@ import profileRoutes from './routes/profile';
 import outfitRoutes from './routes/outfits';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = Number(process.env.PORT) || 4000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
 
 // ── Middleware ────────────────────────────────────────
@@ -41,7 +41,7 @@ app.use(
 
 // ── Start ────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`✓ API running on http://localhost:${PORT}`);
+  console.log('✓ API running on port ' + PORT);
 });
 
 export default app;
